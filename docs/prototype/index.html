@@ -1,0 +1,346 @@
+<title>Tern Design Preview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: quiet sidebar + one left-aligned reading column. Lists instead of cards.
+   The one expressive element is the route line that shows an application's journey. */
+:root {
+  --paper: #FBFCFC; --surface: #F1F4F6; --ink: #14212B; --muted: #566772; --line: #DFE5E9;
+  --sea: #0B6578; --sea-soft: #E2F0F3; --on-sea: #FFFFFF;
+  --soon: #8A5200; --soon-soft: #FBF0DC; --late: #B3261E; --done: #1B7443;
+  --font: "Schibsted Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 40px;
+  --r: 8px; --side: 232px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0F171C; --surface: #17222A; --ink: #E7EDF0; --muted: #9AABB5; --line: #26353F;
+  --sea: #62C6D6; --sea-soft: #14323A; --on-sea: #06222A;
+  --soon: #F0B55A; --soon-soft: #33270F; --late: #FF8A80; --done: #6FD39B; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0F171C; --surface: #17222A; --ink: #E7EDF0; --muted: #9AABB5; --line: #26353F;
+  --sea: #62C6D6; --sea-soft: #14323A; --on-sea: #06222A;
+  --soon: #F0B55A; --soon-soft: #33270F; --late: #FF8A80; --done: #6FD39B; color-scheme: dark }
+
+* { box-sizing: border-box }
+html, body { height: 100% }
+body { background: var(--paper); color: var(--ink); font: 400 15px/1.5 var(--font); display: flex }
+h1, h2, h3, p, ul, ol { margin: 0; padding: 0 }
+ul, ol { list-style: none }
+h1 { font-size: 26px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance }
+h2 { font-size: 15px; font-weight: 600 }
+a { color: var(--sea) }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer }
+:focus-visible { outline: 2px solid var(--sea); outline-offset: 2px; border-radius: 4px }
+.muted { color: var(--muted) }
+.small { font-size: 13px }
+
+/* Sidebar */
+.side { width: var(--side); flex: none; display: flex; flex-direction: column; gap: var(--s5);
+  padding: var(--s5) var(--s4); padding-left: max(16px, env(safe-area-inset-left, 0px)); border-right: 1px solid var(--line) }
+.brand { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; padding: 0 var(--s2) }
+.nav { display: flex; flex-direction: column; gap: 2px }
+.nav a { display: flex; justify-content: space-between; padding: var(--s2); border-radius: var(--r); color: var(--ink); text-decoration: none }
+.nav a:hover { background: var(--surface) }
+.nav a[aria-current="page"] { background: var(--surface); font-weight: 600 }
+.nav .count { color: var(--muted); font-weight: 400 }
+
+/* Main */
+main { flex: 1; min-width: 0; overflow-y: auto; display: flex; flex-direction: column }
+.view { width: 100%; max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--s5);
+  padding-block: var(--s6); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.view[hidden] { display: none }
+.head { display: flex; flex-direction: column; gap: var(--s1) }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 var(--s4);
+  border-radius: var(--r); border: 1px solid var(--line); font-weight: 500; white-space: nowrap; text-decoration: none; color: var(--ink) }
+.btn:hover { background: var(--surface) }
+.btn.primary { background: var(--sea); border-color: var(--sea); color: var(--on-sea) }
+.btn.primary:hover { filter: brightness(1.08); background: var(--sea) }
+.btn[aria-pressed="true"] { background: var(--sea-soft); border-color: transparent; color: var(--sea) }
+.link { color: var(--sea); font-weight: 500 }
+.link:hover { text-decoration: underline }
+
+/* Chat */
+#chat { flex: 1; max-width: 680px; padding-bottom: var(--s4) }
+.thread { display: flex; flex-direction: column; gap: var(--s5); flex: 1 }
+.msg { display: flex; flex-direction: column; gap: var(--s3); max-width: 62ch }
+.msg.user { align-self: flex-end; background: var(--surface); padding: var(--s3) var(--s4); border-radius: 16px 16px 4px 16px }
+.who { font-weight: 600 }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5) }
+.two li { padding-left: var(--s4); position: relative; margin-top: var(--s1) }
+.two li::before { content: ""; position: absolute; left: 0; top: 0.65em; width: 6px; height: 6px; border-radius: 50% ; background: var(--done) }
+.two .fix li::before { background: var(--soon) }
+.progress { display: flex; gap: var(--s2); align-items: center; color: var(--muted) }
+.tick { color: var(--done); font-weight: 700 }
+.composer { position: sticky; bottom: 0; background: var(--paper); padding-block: var(--s3) }
+.composer form { display: flex; gap: var(--s2); align-items: flex-end; border: 1px solid var(--line); border-radius: 14px; padding: var(--s2) }
+.composer form:focus-within { border-color: var(--sea) }
+.composer textarea { flex: 1; min-width: 0; border: 0; background: none; color: var(--ink); font: inherit; resize: none; padding: var(--s2); outline: none }
+.composer textarea::placeholder { color: var(--muted) }
+
+/* Rows (shortlist, applications, documents) */
+.rows { border-top: 1px solid var(--line) }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s2) var(--s4); align-items: center;
+  padding: var(--s4) 0; border-bottom: 1px solid var(--line) }
+.row .title { font-weight: 600 }
+.row .meta { display: flex; flex-wrap: wrap; gap: 2px var(--s4) }
+a.row { color: inherit; text-decoration: none }
+a.row:hover .title { color: var(--sea) }
+.group { display: flex; flex-direction: column; gap: var(--s2) }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2) }
+.chip { min-height: 32px; padding: 0 var(--s3); border-radius: 999px; border: 1px solid var(--line) }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink) }
+.due-soon { color: var(--soon); font-weight: 500 }
+
+/* Checklist */
+.check { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--s3); align-items: start; padding: var(--s3) 0; border-bottom: 1px solid var(--line) }
+.check input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--sea) }
+.check input:checked + span > .what { text-decoration: line-through; color: var(--muted) }
+.check .what { display: block; font-weight: 500 }
+
+/* Route line: the application's journey, drawn like a migration route */
+.route { display: flex; align-items: center }
+.route i { flex: none; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--line); background: var(--paper) }
+.route b { flex: 1; height: 2px; background: var(--line); min-width: 10px }
+.route i.done, .route b.done { background: var(--sea); border-color: var(--sea) }
+.route i.now { width: 14px; height: 14px; border-color: var(--sea); box-shadow: 0 0 0 4px var(--sea-soft) }
+.route.mini { width: 132px }
+.stops { display: flex; justify-content: space-between; margin-top: var(--s2) }
+.stops span { flex: 1; text-align: center; font-size: 13px; color: var(--muted) }
+.stops span:first-child { text-align: left } .stops span:last-child { text-align: right }
+.stops .now { color: var(--ink); font-weight: 600 }
+
+/* Facts with a visible source */
+.facts { border-top: 1px solid var(--line) }
+.fact { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: var(--s1) var(--s4); padding: var(--s3) 0; border-bottom: 1px solid var(--line) }
+.fact dt { color: var(--muted) } .fact dd { margin: 0 }
+.src { border-bottom: 1px dotted var(--muted); text-align: left }
+.src[aria-expanded="true"] { border-bottom-color: var(--sea); color: var(--sea) }
+.proof { grid-column: 2; background: var(--surface); border-radius: var(--r); padding: var(--s3); font-size: 13px }
+.proof q { display: block; margin-bottom: var(--s1) }
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--paper);
+  padding: var(--s2) var(--s4); border-radius: 999px; font-weight: 500; z-index: 5 }
+.banner { position: sticky; top: 0; z-index: 2; background: var(--soon-soft); color: var(--soon); font-size: 13px; padding: var(--s2) var(--s4); text-align: center }
+
+@media (max-width: 760px) {
+  body { flex-direction: column-reverse }
+  .side { width: auto; flex-direction: row; align-items: center; gap: 0; border-right: 0; border-top: 1px solid var(--line);
+    padding: var(--s2) max(8px, env(safe-area-inset-left, 0px)) calc(var(--s2) + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-right, 0px)) }
+  .brand { display: none }
+  .nav { flex-direction: row; flex: 1 }
+  .nav a { flex: 1; justify-content: center; gap: var(--s1); font-size: 13px; padding: var(--s2) var(--s1) }
+  .view { padding-block: var(--s5) }
+  h1 { font-size: 22px }
+  .two { grid-template-columns: 1fr; gap: var(--s4) }
+  .row { grid-template-columns: minmax(0, 1fr) }
+  .row > .btn, .row > .route { justify-self: start }
+  .fact { grid-template-columns: 1fr } .proof { grid-column: 1 }
+  .stops span:not(.now) { display: none } .stops .now { text-align: left }
+  .toast { bottom: calc(72px + env(safe-area-inset-bottom, 0px)) }
+}
+@media (prefers-reduced-motion: no-preference) { .btn, .chip, .nav a { transition: background-color .12s } }
+</style>
+
+<aside class="side">
+  <div class="brand">Tern</div>
+  <nav class="nav" aria-label="Main">
+    <a href="#chat">Chat</a>
+    <a href="#shortlist">Shortlist <span class="count num" id="n-short"></span></a>
+    <a href="#applications">Applications <span class="count num" id="n-apps"></span></a>
+    <a href="#documents">Documents</a>
+  </nav>
+</aside>
+
+<main id="main">
+  <div class="banner" id="banner">Design preview with invented sample data. Nothing here is a real university, deadline or fee.</div>
+
+  <!-- Chat -->
+  <section class="view" id="chat" aria-label="Chat with Tern">
+    <div class="thread" id="thread">
+      <div class="msg">
+        <span class="who">Tern</span>
+        <p>I've read your CV, Rahul. Six years in banking operations and a commerce degree at 7.4 CGPA. For a business analytics master's, here is where you stand.</p>
+        <div class="two">
+          <div><h2>Working for you</h2><ul>
+            <li>Six years of work experience, two leading a team</li>
+            <li>Daily SQL and reporting work that maps to analytics</li>
+            <li>A clear reason for the switch</li></ul></div>
+          <div class="fix"><h2>Worth fixing</h2><ul>
+            <li>No English test yet. Book IELTS this month.</li>
+            <li>Little evidence of statistics. One certified course would help.</li>
+            <li>CV lists duties. Rewrite three lines as results with numbers.</li></ul></div>
+        </div>
+        <p>Which countries are you considering, and what is your total budget?</p>
+      </div>
+      <div class="msg user"><p>UK first, then the Netherlands. Around ₹35 lakh in total. I want to start in September 2027.</p></div>
+      <div class="msg">
+        <span class="who">Tern</span>
+        <p class="progress"><span class="tick" aria-hidden="true">✓</span> Checked 42 courses against official university pages</p>
+        <p>12 courses fit your profile and budget. 3 are a stretch, 6 are a good match and 3 are safe. These three are the strongest fits.</p>
+        <ul class="rows" id="chat-rows"></ul>
+        <p><a class="btn" href="#shortlist">See all 12 courses</a></p>
+      </div>
+    </div>
+    <div class="composer">
+      <form id="ask">
+        <label for="q" hidden>Message Tern</label>
+        <textarea id="q" name="q" rows="1" placeholder="Ask Tern anything" autocomplete="off"></textarea>
+        <button class="btn primary" type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Shortlist -->
+  <section class="view" id="shortlist" aria-label="Shortlist" hidden>
+    <div class="head"><h1>12 courses fit your profile</h1>
+      <p class="muted">Matched to a ₹35 lakh budget and a September 2027 start. Every deadline is checked against the university's own page.</p></div>
+    <div class="chips" role="group" aria-label="Filter by fit" id="filters"></div>
+    <div id="short-groups" style="display:flex;flex-direction:column;gap:var(--s5)"></div>
+  </section>
+
+  <!-- Applications -->
+  <section class="view" id="applications" aria-label="Applications" hidden>
+    <div class="head"><h1>Applications</h1><p class="muted" id="apps-sub"></p></div>
+    <div class="group"><h2>Due this week</h2><ul class="rows" id="week" style="border-top:1px solid var(--line)"></ul></div>
+    <div class="group"><h2>All applications</h2><div class="rows" id="apps"></div></div>
+  </section>
+
+  <!-- Application detail -->
+  <section class="view" id="application" aria-label="Application" hidden>
+    <p><a class="link" href="#applications">Applications</a></p>
+    <div class="head"><h1>MSc Business Analytics</h1><p class="muted">Harrowgate University, Manchester, UK</p></div>
+    <div><div class="route" id="route"></div><div class="stops" id="stops"></div></div>
+    <p><a class="btn primary" href="#application" id="apply">Apply on the university site</a></p>
+    <div class="group"><h2>What you need to do <span class="muted num" id="todo-count" style="font-weight:400"></span></h2><ul id="checklist" style="border-top:1px solid var(--line)"></ul></div>
+    <div class="group"><h2>Course facts</h2><p class="small muted">Select any fact to see where it came from.</p><dl class="facts" id="facts" style="margin:0"></dl></div>
+  </section>
+
+  <!-- Documents -->
+  <section class="view" id="documents" aria-label="Documents" hidden>
+    <div class="head"><h1>Documents</h1><p class="muted">Everything you upload and every draft Tern writes with you. Only you can see these.</p></div>
+    <p><button class="btn" type="button" data-toast="Uploading is switched off in this preview">Upload a document</button></p>
+    <div class="rows" id="docs"></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content.firstChild; };
+
+const courses = [
+  { id: 1, fit: 'Stretch', name: 'MSc Business Analytics', uni: 'University of Wexcombe', place: 'London, UK', due: '1 Dec 2026', soon: true, fee: '£34,200', why: 'Your experience fits, but most admitted students have a quantitative degree.' },
+  { id: 2, fit: 'Stretch', name: 'MSc Data Science for Business', uni: 'Amstel Institute of Technology', place: 'Amsterdam, Netherlands', due: '15 Jan 2027', fee: '€21,400', why: 'Asks for proven statistics coursework, which your CV does not show yet.' },
+  { id: 3, fit: 'Good match', name: 'MSc Business Analytics', uni: 'Harrowgate University', place: 'Manchester, UK', due: '15 Jan 2027', fee: '£27,500', why: 'Values work experience and accepts a 7.0 CGPA from your university.', top: true, tracked: true },
+  { id: 4, fit: 'Good match', name: 'MSc Management and Analytics', uni: 'Kelvinside University', place: 'Glasgow, UK', due: '31 Mar 2027', fee: '£25,800', why: 'Built for career switchers. No prior coding required.', top: true, tracked: true },
+  { id: 5, fit: 'Good match', name: 'MSc Business Information Management', uni: 'Maasveld University', place: 'Rotterdam, Netherlands', due: '1 Feb 2027', fee: '€19,800', why: 'Strong fit for an operations background, and inside your budget.', top: true },
+  { id: 6, fit: 'Good match', name: 'MSc Operations and Analytics', uni: 'Calderbrook University', place: 'Leeds, UK', due: '30 Apr 2027', fee: '£26,000', why: 'Course modules match the work you already do in reporting.' },
+  { id: 7, fit: 'Safe', name: 'MSc Business Analytics', uni: 'Northmere University', place: 'Sheffield, UK', due: '30 Jun 2027', fee: '£21,900', why: 'You exceed the entry grade and the experience requirement.', tracked: true },
+  { id: 8, fit: 'Safe', name: 'MSc Digital Business', uni: 'Dún Carraig University', place: 'Dublin, Ireland', due: '31 May 2027', fee: '€18,500', why: 'Rolling admissions, and your profile is above last year\'s typical offer.' },
+];
+const fits = ['Stretch', 'Good match', 'Safe'];
+const fitNote = { 'Stretch': 'Harder to get into. Apply to one or two.', 'Good match': 'Realistic with a strong application.', 'Safe': 'You are above the usual entry bar.' };
+let filter = 'All';
+
+const courseRow = (c) => `<li class="row" data-id="${c.id}">
+  <div><div class="title">${c.name}</div>
+    <div class="meta muted"><span>${c.uni}, ${c.place}</span></div>
+    <div class="meta small"><span class="num ${c.soon ? 'due-soon' : ''}">Apply by ${c.due}</span><span class="num muted">${c.fee} tuition</span></div>
+    <div class="small muted">${c.why}</div></div>
+  <button class="btn" type="button" aria-pressed="${!!c.tracked}" data-track="${c.id}">${c.tracked ? 'Tracking' : 'Track'}</button></li>`;
+
+function renderShortlist() {
+  $('#chat-rows').innerHTML = courses.filter(c => c.top).map(courseRow).join('');
+  $('#filters').innerHTML = ['All', ...fits].map(f => `<button class="chip" type="button" aria-pressed="${f === filter}" data-filter="${f}">${f}</button>`).join('');
+  $('#short-groups').innerHTML = fits.filter(f => filter === 'All' || f === filter).map(f =>
+    `<div class="group"><h2>${f} <span class="muted" style="font-weight:400">${fitNote[f]}</span></h2><ul class="rows">${courses.filter(c => c.fit === f).map(courseRow).join('')}</ul></div>`).join('');
+  $('#n-short').textContent = 12;
+  renderApps();
+}
+
+const steps = ['Shortlisted', 'Preparing', 'Submitted', 'Offer', 'Deposit', 'Visa', 'Enrolled'];
+const route = (at) => steps.map((s, i) => `${i ? `<b class="${i <= at ? 'done' : ''}"></b>` : ''}<i class="${i < at ? 'done' : i === at ? 'now' : ''}"></i>`).join('');
+const stage = { 3: 1, 4: 1, 7: 0 };
+const next = { 3: 'Ask Prof. Iyer for a reference', 4: 'Finish your statement of purpose', 7: 'Start your application' };
+
+function renderApps() {
+  const t = courses.filter(c => c.tracked);
+  $('#n-apps').textContent = t.length;
+  $('#apps-sub').textContent = t.length ? `You are tracking ${t.length} ${t.length === 1 ? 'course' : 'courses'}. The next deadline is 15 January.` : '';
+  $('#apps').innerHTML = t.length ? t.map(c => { const at = stage[c.id] ?? 0; return `<a class="row" href="#application">
+    <div><div class="title">${c.name}</div><div class="muted">${c.uni}</div>
+      <div class="small"><span class="muted">Next:</span> ${next[c.id] || 'Start your application'}</div><div class="small muted">Apply by ${c.due}</div></div>
+    <div class="route mini" role="img" aria-label="Step ${at + 1} of ${steps.length}: ${steps[at]}">${route(at)}</div></a>`; }).join('')
+    : `<p class="muted" style="padding:var(--s4) 0">You are not tracking any courses yet. Open your <a href="#shortlist">shortlist</a> and choose Track on the ones you want to apply to.</p>`;
+}
+
+const week = [
+  ['Ask Prof. Iyer for a reference', 'Harrowgate University', 'Fri 13 Nov'],
+  ['Finish your statement of purpose', 'Kelvinside University', 'Sun 15 Nov'],
+  ['Book your IELTS test', 'Needed for all three applications', 'Mon 16 Nov'],
+];
+const checklist = [
+  ['Statement of purpose, 800 words', 'Draft 2 saved yesterday', 'Continue with Tern', false],
+  ['Reference from a manager', 'Anita Rao agreed on 4 Nov', '', true],
+  ['Reference from a professor', 'Not requested yet. Due Fri 13 Nov', 'Write the request', false],
+  ['CV, two pages', 'Version 2 uploaded', '', true],
+  ['IELTS 6.5 overall, 6.0 in each part', 'Not booked yet', '', false],
+  ['Degree transcripts', 'Uploaded', '', true],
+];
+const facts = [
+  ['Application deadline', '15 January 2027', 'Applications for September 2027 entry close on 15 January 2027.', 'harrowgate.example/msc-business-analytics', '3 days ago'],
+  ['Tuition', '£27,500 for international students', 'International fee for 2027 entry: £27,500.', 'harrowgate.example/fees', '3 days ago'],
+  ['Entry requirement', 'Bachelor\'s degree at 60% or 7.0 CGPA', 'Indian applicants need a first-class degree, 60% or 7.0/10.', 'harrowgate.example/international/india', '9 days ago'],
+  ['English test', 'IELTS 6.5 overall, 6.0 in each part', 'IELTS 6.5 with no component below 6.0.', 'harrowgate.example/english-requirements', '9 days ago'],
+  ['References', 'Two. One can be from an employer.', 'Two references are required, at least one academic.', 'harrowgate.example/how-to-apply', '3 days ago'],
+  ['Deposit', 'Not checked yet. See the official page.', '', '', ''],
+];
+
+function renderStatic() {
+  $('#week').innerHTML = week.map((w, i) => `<li class="check"><input type="checkbox" id="w${i}"><span><label class="what" for="w${i}">${w[0]}</label><span class="small muted">${w[1]}</span></span><span class="small num due-soon">${w[2]}</span></li>`).join('');
+  $('#route').innerHTML = route(1);
+  $('#route').setAttribute('role', 'img'); $('#route').setAttribute('aria-label', 'Step 2 of 7: Preparing');
+  $('#stops').innerHTML = steps.map((s, i) => `<span class="${i === 1 ? 'now' : ''}">${s}</span>`).join('');
+  $('#checklist').innerHTML = checklist.map((c, i) => `<li class="check"><input type="checkbox" id="c${i}" ${c[3] ? 'checked' : ''}><span><label class="what" for="c${i}">${c[0]}</label><span class="small muted">${c[1]}</span></span>${c[2] ? `<button class="link small" type="button" data-toast="Tern would open this in chat">${c[2]}</button>` : '<span></span>'}</li>`).join('');
+  $('#facts').innerHTML = facts.map((f, i) => `<div class="fact"><dt>${f[0]}</dt><dd>${f[3] ? `<button class="src num" type="button" aria-expanded="false" aria-controls="p${i}" data-proof="${i}">${f[1]}</button>` : `<span class="muted">${f[1]}</span>`}</dd>
+    ${f[3] ? `<div class="proof" id="p${i}" hidden><q>${f[2]}</q><span class="muted">${f[3]}. Checked ${f[4]}.</span></div>` : ''}</div>`).join('');
+  $('#docs').innerHTML = [
+    ['CV', 'Version 2, uploaded 2 Nov'], ['Statement of purpose for Harrowgate', 'Draft 2, edited yesterday'],
+    ['Statement of purpose for Kelvinside', 'Draft 1, edited 6 Nov'], ['Reference brief for Anita Rao', 'Sent by you on 4 Nov'], ['Degree transcripts', 'Uploaded 2 Nov'],
+  ].map(d => `<div class="row"><div><div class="title">${d[0]}</div><div class="small muted">${d[1]}</div></div><button class="btn" type="button" data-toast="Opening documents is switched off in this preview">Open</button></div>`).join('');
+  countTodo();
+}
+function countTodo() { const b = [...document.querySelectorAll('#checklist input')]; $('#todo-count').textContent = `${b.filter(x => x.checked).length} of ${b.length} done`; }
+
+let toastTimer;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.hidden = true, 2400); }
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button, a'); if (!b) return;
+  if (b.dataset.track) { const c = courses.find(c => c.id == b.dataset.track); c.tracked = !c.tracked; renderShortlist(); toast(c.tracked ? 'Added to your applications' : 'Removed from your applications'); }
+  else if (b.dataset.filter) { filter = b.dataset.filter; renderShortlist(); }
+  else if (b.dataset.proof) { const p = $('#p' + b.dataset.proof); p.hidden = !p.hidden; b.setAttribute('aria-expanded', String(!p.hidden)); }
+  else if (b.dataset.toast) toast(b.dataset.toast);
+  else if (b.id === 'apply') { e.preventDefault(); toast('In the real app this opens the university\'s application page'); }
+});
+document.addEventListener('change', (e) => { if (e.target.closest('#checklist')) countTodo(); });
+$('#ask').addEventListener('submit', (e) => {
+  e.preventDefault(); const q = $('#q').value.trim(); if (!q) return;
+  const u = el('<div class="msg user"><p></p></div>'); u.firstChild.textContent = q; $('#thread').append(u);
+  $('#thread').append(el('<div class="msg"><span class="who">Tern</span><p>This is a design preview, so I can\'t answer yet. In the real app I would reply here.</p></div>'));
+  $('#q').value = ''; $('#main').scrollTop = $('#main').scrollHeight;
+});
+$('#q').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#ask').requestSubmit(); } });
+
+const views = ['chat', 'shortlist', 'applications', 'application', 'documents'];
+function show() {
+  const v = views.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'chat';
+  views.forEach(id => $('#' + id).hidden = id !== v);
+  document.querySelectorAll('.nav a').forEach(a => { const on = a.hash === '#' + (v === 'application' ? 'applications' : v); on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'); });
+  const m = $('#main'); const go = () => m.scrollTop = v === 'chat' ? m.scrollHeight : 0; go(); requestAnimationFrame(go); setTimeout(go, 60);
+}
+addEventListener('hashchange', show);
+renderShortlist(); renderStatic(); show();
+</script>

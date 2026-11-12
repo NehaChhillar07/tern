@@ -1,4 +1,4 @@
-# Master Prompt: AI Study-Abroad Counsellor (working name: "Pathway")
+# Master Prompt: AI Study-Abroad Counsellor — "Tern"
 
 > Paste this into Claude Code at the start of the build.
 

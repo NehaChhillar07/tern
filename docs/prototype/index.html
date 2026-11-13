@@ -1,125 +1,143 @@
 <title>Tern Design Preview</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500&family=Inter:wght@400;500;600&display=swap">
 <style>
-/* Layout: no navigation. One thread down the middle; Tern reports what it did, you answer.
-   Applications are boarding passes. Anything you open slides in as a sheet over the thread. */
+/* Layout: no navigation. One calm column on an off-white canvas; Tern's orb at the top, soft cards, pastel blooms as the only colour. */
 :root {
-  --ground: #FFFFFF; --card: #FFFFFF; --wash: #F2F2EE; --ink: #000000; --muted: #5E5E5A; --edge: #000000; --hair: #DEDED8;
-  --sun: #FFD60A; --on-sun: #000000; --cobalt: #2B4BFF; --bill: #D42C10; --go: #0B7F47;
-  --font: "Bricolage Grotesque", "Arial Narrow", Arial, sans-serif; --mono: "DM Mono", ui-monospace, Menlo, monospace;
+  --canvas: #F5F5F3; --card: #FFFFFF; --strong: #EFEEEB; --ink: #0C0A09; --body: #45423F; --muted: #76706A;
+  --hair: #E6E4E1; --hair-strong: #D5D2CE; --primary: #1C1917; --on-primary: #FFFFFF;
+  --mint: #B4E6D4; --peach: #F6CDB0; --lilac: #CDBDE6; --sky: #AFCDEE; --rose: #EDBFCB;
+  --alert: #B4231A; --alert-soft: #FBE4E1; --ok: #15803D;
+  --display: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif; --text: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ease: cubic-bezier(.2, .8, .2, 1); --lift: 0 6px 24px rgba(12, 10, 9, .06);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --ground: #0B0B0D; --card: #17171A; --wash: #1F1F23; --ink: #FFFFFF; --muted: #A6A6A0; --edge: #4A4A52; --hair: #2B2B31;
-  --sun: #FFD60A; --on-sun: #000000; --cobalt: #93A5FF; --bill: #FF7359; --go: #4FD68C; color-scheme: dark } }
+  --canvas: #0C0A09; --card: #1A1716; --strong: #262220; --ink: #FAFAF9; --body: #D2CEC9; --muted: #A39D96;
+  --hair: #2A2624; --hair-strong: #3D3835; --primary: #FAFAF9; --on-primary: #0C0A09;
+  --mint: #1F4A3F; --peach: #5A3A26; --lilac: #3D315C; --sky: #25405E; --rose: #5A2F3C;
+  --alert: #FF8A7D; --alert-soft: #3A1B18; --ok: #5FD08E; --lift: 0 6px 24px rgba(0, 0, 0, .4); color-scheme: dark } }
 :root[data-theme="dark"] {
-  --ground: #0B0B0D; --card: #17171A; --wash: #1F1F23; --ink: #FFFFFF; --muted: #A6A6A0; --edge: #4A4A52; --hair: #2B2B31;
-  --sun: #FFD60A; --on-sun: #000000; --cobalt: #93A5FF; --bill: #FF7359; --go: #4FD68C; color-scheme: dark }
+  --canvas: #0C0A09; --card: #1A1716; --strong: #262220; --ink: #FAFAF9; --body: #D2CEC9; --muted: #A39D96;
+  --hair: #2A2624; --hair-strong: #3D3835; --primary: #FAFAF9; --on-primary: #0C0A09;
+  --mint: #1F4A3F; --peach: #5A3A26; --lilac: #3D315C; --sky: #25405E; --rose: #5A2F3C;
+  --alert: #FF8A7D; --alert-soft: #3A1B18; --ok: #5FD08E; --lift: 0 6px 24px rgba(0, 0, 0, .4); color-scheme: dark }
 
 * { box-sizing: border-box } [hidden] { display: none !important }
 html, body { height: 100% }
-body { margin: 0; background: var(--ground); color: var(--ink); font: 400 16px/1.45 var(--font); display: flex; flex-direction: column }
+body { margin: 0; background: var(--canvas); color: var(--body); font: 400 16px/1.5 var(--text); letter-spacing: 0.01em; display: flex; flex-direction: column }
 h1, h2, p, ul, dl, dd { margin: 0; padding: 0 } ul { list-style: none }
-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left }
-a { color: var(--cobalt) }
-:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; border-radius: 6px }
+button { font: inherit; letter-spacing: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left }
+strong, label { color: var(--ink) }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px }
 .muted { color: var(--muted) } .small { font-size: 14px }
-.mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em }
+.mono { font: 600 11px/1.4 var(--text); letter-spacing: 0.08em; text-transform: uppercase }
 
 .wrap { width: 100%; max-width: 720px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
-.note { background: var(--wash); color: var(--muted); font-size: 13px; text-align: center; padding: 6px 16px }
+.note { color: var(--muted); font-size: 13px; text-align: center; padding: 6px 16px; border-bottom: 1px solid var(--hair) }
 header .wrap { display: flex; align-items: center; justify-content: space-between; padding-block: 14px }
-.mark { font-weight: 800; font-size: 24px; letter-spacing: -0.04em }
-.pill { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--edge); font-weight: 500; background: var(--card); white-space: nowrap }
-.pill:hover { background: var(--wash) }
-.pill.sun { background: var(--sun); color: var(--on-sun); border-color: var(--sun); font-weight: 600 }
-.pill.sun:hover { background: var(--sun); filter: brightness(0.95) }
+.mark { font: 500 20px/1 var(--display); letter-spacing: -0.02em; color: var(--ink) }
+.pill { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hair-strong);
+  font-size: 15px; font-weight: 500; color: var(--ink); background: var(--card); white-space: nowrap; transition: background-color .2s var(--ease), transform .2s var(--ease) }
+.pill:hover { background: var(--strong) } .pill:active { transform: scale(0.97) }
+.pill.primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary) }
+.pill.primary:hover { background: var(--primary); opacity: .88 }
+
+/* Tern's orb: the one living thing on the page */
+.orb { width: 48px; height: 48px; border-radius: 50%; flex: none; position: relative; overflow: hidden;
+  background: conic-gradient(from 0deg, #A7E5D3, #A8C8E8, #C8B8E0, #E8B8C4, #F4C5A8, #A7E5D3); animation: turn 14s linear infinite }
+.orb::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0) 55%); }
+.orb.sm { width: 16px; height: 16px } .live .orb { animation-duration: 2.2s }
+.done .orb { animation: none; background: var(--ok) } .done .orb::after { display: none }
+@keyframes turn { to { transform: rotate(360deg) } }
 
 main { flex: 1; overflow-y: auto; min-height: 0 }
-.thread { display: flex; flex-direction: column; gap: 40px; padding-block: 24px 32px }
+.note, header, main, .dock { position: relative; z-index: 1 }
+body::before { content: ""; position: fixed; z-index: 0; top: -140px; left: 50%; width: min(900px, 140%); height: 460px; transform: translateX(-50%); pointer-events: none; opacity: .6; filter: blur(70px);
+  background: radial-gradient(circle at 25% 50%, var(--peach), transparent 55%), radial-gradient(circle at 60% 30%, var(--lilac), transparent 55%), radial-gradient(circle at 85% 60%, var(--sky), transparent 50%) }
+.thread { display: flex; flex-direction: column; gap: 44px; padding-block: 28px 36px; position: relative }
 .block { display: flex; flex-direction: column; gap: 14px }
-h1 { font-size: clamp(34px, 7.4vw, 54px); line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance }
-h1 .days { white-space: nowrap; background: var(--sun); color: var(--on-sun); padding: 0 0.16em; border-radius: 0.18em }
-h2 { font-size: 15px; font-weight: 600; color: var(--muted) }
+h1 { font: 300 clamp(32px, 6.4vw, 50px)/1.08 var(--display); letter-spacing: -0.03em; color: var(--ink); text-wrap: balance }
+h1 .soft { color: var(--muted) }
+h2 { font: 500 15px/1.4 var(--text); color: var(--ink) }
 
-/* What Tern did while you were away */
-.did li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--hair) }
-.did li:first-child { border-top: 1px solid var(--hair) }
-.glyph { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; background: var(--wash) }
-.glyph.flag { background: var(--bill); color: #fff } .glyph.need { background: var(--sun); color: var(--on-sun) }
-.did .act { margin-top: 8px }
+.list { background: var(--card); border: 1px solid var(--hair); border-radius: 16px; padding: 4px 16px }
+.did li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; padding: 14px 0 }
+.did li + li, .todo li + li, .found li + li { border-top: 1px solid var(--hair) }
+.glyph { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--strong); color: var(--ink) }
+.glyph.flag { background: var(--alert-soft); color: var(--alert) } .glyph.need { background: var(--peach) }
+.did .act { margin-top: 10px }
 
 /* Boarding passes */
-.passes { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 10px; margin: 0 -2px }
-.pass { flex: none; width: min(88%, 420px); scroll-snap-align: start; display: grid; grid-template-columns: minmax(0, 1fr) 118px;
-  background: var(--card); border: 1.5px solid var(--edge); border-radius: 22px; position: relative }
-.pass > div { padding: 16px }
-.pass .stub { border-left: 1.5px dashed var(--edge); display: flex; flex-direction: column; justify-content: space-between; gap: 8px }
-.pass::before, .pass::after { content: ""; position: absolute; right: 108px; width: 20px; height: 10px; background: var(--ground); border: 1.5px solid var(--edge) }
-.pass::before { top: -1.5px; border-top: 0; border-radius: 0 0 20px 20px }
-.pass::after { bottom: -1.5px; border-bottom: 0; border-radius: 20px 20px 0 0 }
-.codes { display: flex; align-items: baseline; gap: 10px; font-weight: 800; font-size: 38px; letter-spacing: -0.03em; line-height: 1 }
-.codes span { font-size: 16px; font-weight: 400; color: var(--muted) }
-.pass .uni { font-weight: 600; margin-top: 10px } .pass .lbl { color: var(--muted) }
-.gate { font-weight: 800; font-size: 22px; letter-spacing: -0.02em; line-height: 1.05 }
-.gate.close { color: var(--bill) }
-.dots { display: flex; gap: 4px } .dots i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--edge) } .dots i.on { background: var(--ink) }
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .pass { transition: transform .12s, box-shadow .12s } .pass:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--edge) }
-  .pill { transition: transform .08s } .pill:active { transform: scale(0.96) } }
+.passes { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 14px; margin: 0 -2px }
+.pass { flex: none; width: min(88%, 420px); scroll-snap-align: start; display: grid; grid-template-columns: minmax(0, 1fr) 122px; color: var(--body);
+  background: var(--card); border: 1px solid var(--hair); border-radius: 20px; position: relative; transition: box-shadow .3s var(--ease), transform .3s var(--ease) }
+.pass:hover { box-shadow: var(--lift); transform: translateY(-2px) }
+.pass > div { padding: 18px }
+.pass > div:first-child { border-radius: 20px 0 0 20px;
+  background: radial-gradient(circle at 12% 0%, var(--peach), transparent 58%), radial-gradient(circle at 78% 8%, var(--rose), transparent 52%) }
+.pass:nth-child(3n+2) > div:first-child { background: radial-gradient(circle at 12% 0%, var(--mint), transparent 58%), radial-gradient(circle at 78% 8%, var(--sky), transparent 52%) }
+.pass:nth-child(3n) > div:first-child { background: radial-gradient(circle at 12% 0%, var(--lilac), transparent 58%), radial-gradient(circle at 78% 8%, var(--sky), transparent 52%) }
+.pass .stub { border-left: 1px dashed var(--hair-strong); display: flex; flex-direction: column; justify-content: space-between; gap: 8px }
+.pass::before, .pass::after { content: ""; position: absolute; right: 113px; width: 18px; height: 9px; background: var(--canvas); border: 1px solid var(--hair) }
+.pass::before { top: -1px; border-top: 0; border-radius: 0 0 18px 18px }
+.pass::after { bottom: -1px; border-bottom: 0; border-radius: 18px 18px 0 0 }
+.codes { display: flex; align-items: baseline; gap: 10px; font: 300 38px/1 var(--display); letter-spacing: -0.03em; color: var(--ink) }
+.codes span { font-size: 18px; color: var(--muted) }
+.pass .uni { font-weight: 500; color: var(--ink); margin-top: 14px } .pass .lbl { color: var(--muted) }
+.gate { font: 400 22px/1.1 var(--display); letter-spacing: -0.02em; color: var(--ink); margin-top: 2px }
+.gate.close { color: var(--alert) }
+.dots { display: flex; gap: 4px } .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair-strong) } .dots i.on { background: var(--ink) }
 
-/* To-do */
-.todo li { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--hair) }
-.todo li:first-child { border-top: 1px solid var(--hair) }
-.todo input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--ink) }
+.todo li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 14px 0 }
+.todo input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--primary) }
 .todo input:checked + span > label { text-decoration: line-through; color: var(--muted) }
 .todo label { display: block; font-weight: 500 }
-.when { font-family: var(--mono); font-size: 12px; color: var(--bill); white-space: nowrap; padding-top: 3px }
+.when { font: 600 11px/1.4 var(--text); letter-spacing: 0.08em; color: var(--alert); white-space: nowrap; padding-top: 5px }
 
 /* Conversation */
-.you { align-self: flex-end; max-width: 85%; background: var(--wash); padding: 10px 16px; border-radius: 20px 20px 4px 20px }
-.run { border: 1.5px solid var(--edge); border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px }
-.run .head { display: flex; align-items: center; gap: 10px; font-weight: 600 }
-.beat { width: 10px; height: 10px; border-radius: 50%; background: var(--sun); box-shadow: 0 0 0 1.5px var(--edge) }
-.run.live .beat { animation: beat 0.9s ease-in-out infinite }
-.run.done .beat { background: var(--go) }
-.run li { display: flex; gap: 8px; color: var(--muted) } .run li b { color: var(--go) }
-.found li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--hair) }
-.found li:first-child { border-top: 1px solid var(--hair) }
-.tag { font-family: var(--mono); font-size: 12px; padding: 1px 6px; border-radius: 6px; background: var(--wash) }
-@keyframes beat { 50% { transform: scale(1.5); opacity: .6 } }
-@keyframes stamp { from { transform: rotate(-14deg) scale(1.9); opacity: 0 } to { transform: rotate(-8deg) scale(1); opacity: 1 } }
-@keyframes rise { from { transform: translateY(8px); opacity: 0 } }
-@media (prefers-reduced-motion: no-preference) { .enter { animation: rise .25s ease-out } }
-@media (prefers-reduced-motion: reduce) { .run.live .beat { animation: none } }
+.you { align-self: flex-end; max-width: 85%; background: var(--strong); color: var(--ink); padding: 10px 16px; border-radius: 20px 20px 6px 20px }
+.run { background: var(--card); border: 1px solid var(--hair); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px }
+.run .head { display: flex; align-items: center; gap: 10px; font-weight: 500; color: var(--ink) }
+.run.live .head span:last-child { background: linear-gradient(90deg, var(--ink) 30%, var(--muted) 50%, var(--ink) 70%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: sheen 1.8s linear infinite }
+.run li { display: flex; gap: 8px; color: var(--muted) } .run li b { color: var(--ok) }
+.found li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 14px 0 }
+.tag { font: 500 12px/1.6 var(--text); padding: 1px 8px; border-radius: 999px; background: var(--strong); color: var(--ink) }
+@keyframes sheen { to { background-position: -200% 0 } }
+@keyframes stamp { from { transform: rotate(-12deg) scale(1.5); opacity: 0 } to { transform: rotate(-6deg) scale(1); opacity: 1 } }
+@keyframes rise { from { transform: translateY(12px); opacity: 0 } }
+@keyframes fade { from { opacity: 0 } }
+.enter { animation: rise .5s var(--ease) }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important } .run.live .head span:last-child { color: var(--ink); background: none } }
 
 /* Composer */
-.dock { border-top: 1px solid var(--hair); background: var(--ground); padding-bottom: env(safe-area-inset-bottom, 0px) }
-.dock .wrap { display: flex; flex-direction: column; gap: 10px; padding-block: 10px 12px }
-.chips { display: flex; gap: 8px; overflow-x: auto } .chips .pill { flex: none; min-height: 32px; font-size: 14px }
-.ask { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--edge); border-radius: 999px; padding: 5px 5px 5px 18px; background: var(--card) }
-.ask input { flex: 1; min-width: 0; border: 0; background: none; color: var(--ink); font: inherit; outline: none; height: 38px }
+.dock { background: linear-gradient(to top, var(--canvas) 70%, transparent); padding-bottom: env(safe-area-inset-bottom, 0px) }
+.dock .wrap { display: flex; flex-direction: column; gap: 10px; padding-block: 10px 14px }
+.chips { display: flex; gap: 8px; overflow-x: auto } .chips .pill { flex: none; min-height: 32px; font-size: 14px; font-weight: 400 }
+.ask { display: flex; align-items: center; gap: 8px; border: 1px solid var(--hair-strong); border-radius: 26px; padding: 6px 6px 6px 20px; background: var(--card); box-shadow: var(--lift); transition: border-color .2s var(--ease) }
+.ask:focus-within { border-color: var(--ink) }
+.ask input { flex: 1; min-width: 0; border: 0; background: none; color: var(--ink); font: inherit; outline: none; height: 40px }
 .ask input::placeholder { color: var(--muted) }
-.send { width: 38px; height: 38px; border-radius: 50%; background: var(--sun); color: var(--on-sun); display: grid; place-items: center; font-weight: 800; font-size: 18px }
+.send { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-size: 18px; transition: transform .2s var(--ease) }
+.send:active { transform: scale(0.94) }
 
 /* Sheet */
-.veil { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 20 }
-.sheet { position: fixed; z-index: 21; background: var(--ground); overflow-y: auto; display: flex; flex-direction: column; gap: 22px;
-  top: 0; right: 0; bottom: 0; width: min(480px, 100%); border-left: 1.5px solid var(--edge);
-  padding: calc(18px + env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) 20px }
+.veil { position: fixed; inset: 0; background: rgba(12, 10, 9, .35); backdrop-filter: blur(3px); z-index: 20; animation: fade .3s var(--ease) }
+.sheet { position: fixed; z-index: 21; background: var(--canvas); overflow-y: auto; display: flex; flex-direction: column; gap: 24px;
+  top: 12px; right: 12px; bottom: 12px; width: min(480px, calc(100% - 24px)); border: 1px solid var(--hair); border-radius: 24px; box-shadow: var(--lift); animation: rise .45s var(--ease);
+  padding: 20px 22px 28px }
 .sheet .top { display: flex; justify-content: space-between; align-items: center }
-.sheet h1 { font-size: 30px } .sheet .codes { font-size: 52px }
-.stamp { align-self: flex-start; font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: 0.08em; color: var(--cobalt);
-  border: 2px solid var(--cobalt); border-radius: 8px; padding: 3px 10px; transform: rotate(-8deg) }
-@media (prefers-reduced-motion: no-preference) { .stamp { animation: stamp .28s cubic-bezier(.2, 1.4, .4, 1) } .sheet { animation: rise .2s ease-out } }
-.facts > div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 4px 12px; padding: 10px 0; border-bottom: 1px solid var(--hair) }
-.facts > div:first-child { border-top: 1px solid var(--hair) }
-.facts dt { color: var(--muted) }
-.src { border-bottom: 1.5px dotted var(--muted) } .src[aria-expanded="true"] { border-bottom-color: var(--cobalt); color: var(--cobalt) }
-.proof { grid-column: 1 / -1; background: var(--wash); border-radius: 12px; padding: 10px 12px; font-size: 14px }
-.proof q { display: block }
+.sheet h1 { font-size: 30px } .sheet .codes { font-size: 54px }
+.stamp { align-self: flex-start; font: 600 12px/1.4 var(--text); letter-spacing: 0.1em; color: var(--muted); border: 1.5px solid var(--hair-strong); border-radius: 8px; padding: 4px 10px; transform: rotate(-6deg); animation: stamp .45s var(--ease) }
+.facts { background: var(--card); border: 1px solid var(--hair); border-radius: 16px; padding: 4px 16px }
+.facts > div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 4px 12px; padding: 12px 0 }
+.facts > div + div { border-top: 1px solid var(--hair) }
+.facts dt { color: var(--muted) } .facts dd { color: var(--ink) }
+.src { border-bottom: 1px dotted var(--muted) } .src[aria-expanded="true"] { border-bottom-style: solid; border-bottom-color: var(--ink) }
+.proof { grid-column: 1 / -1; background: var(--strong); border-radius: 12px; padding: 10px 12px; font-size: 14px; animation: fade .3s var(--ease) }
+.proof q { display: block; color: var(--ink) }
 @media (max-width: 640px) {
-  .sheet { top: auto; left: 0; width: 100%; max-height: 88%; border-left: 0; border-top: 1.5px solid var(--edge); border-radius: 26px 26px 0 0; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-top: 18px }
+  .sheet { top: auto; left: 0; right: 0; bottom: 0; width: 100%; max-height: 90%; border-radius: 26px 26px 0 0; border-width: 1px 0 0;
+    padding: 18px max(20px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)) }
   .facts > div { grid-template-columns: 1fr } }
 </style>
 
@@ -131,16 +149,17 @@ h2 { font-size: 15px; font-weight: 600; color: var(--muted) }
 
 <main id="main"><div class="wrap thread" id="thread">
   <section class="block">
-    <h1>Hey Rahul. <span class="days">64 days</span> until your first gate closes.</h1>
+    <div class="orb" aria-hidden="true"></div>
+    <h1>Good morning, Rahul. <span class="soft">64 days until your first gate closes.</span></h1>
     <p class="muted">Three things need you this week. I handled the rest.</p>
   </section>
 
   <section class="block" aria-labelledby="h-did">
     <h2 id="h-did">While you were away</h2>
-    <ul class="did">
+    <ul class="did list">
       <li><span class="glyph flag" aria-hidden="true">!</span><div>Kelvinside moved its deadline from 31 March to <strong>14 March</strong>. I updated your plan and your reminders.</div></li>
       <li><span class="glyph need" aria-hidden="true">?</span><div>I drafted your reference request to Prof. Iyer. Read it, then send it from your own email.
-        <div class="act"><button class="pill sun" type="button" data-say="Show me the reference request">Read the draft</button></div></div></li>
+        <div class="act"><button class="pill primary" type="button" data-say="Show me the reference request">Read the draft</button></div></div></li>
       <li><span class="glyph" aria-hidden="true">✓</span><div class="muted">Checked 14 university pages overnight. Nothing else changed.</div></li>
     </ul>
   </section>
@@ -152,7 +171,7 @@ h2 { font-size: 15px; font-weight: 600; color: var(--muted) }
 
   <section class="block" aria-labelledby="h-todo">
     <h2 id="h-todo">Needs you this week</h2>
-    <ul class="todo" id="todo"></ul>
+    <ul class="todo list" id="todo"></ul>
   </section>
 </div></main>
 
@@ -217,14 +236,14 @@ function openSheet(id) {
     <h1 id="sheet-title">Rahul Menon</h1>
     <p class="muted">Everything Tern knows about you. Only you can see it. Fix anything that's wrong and Tern re-checks your matches.</p>
     <dl class="facts"><div><dt>Degree</dt><dd>BCom, 7.4 CGPA</dd></div><div><dt>Work</dt><dd>6 years, banking operations</dd></div><div><dt>Wants</dt><dd>Business analytics, UK then Netherlands</dd></div><div><dt>Budget</dt><dd>₹35 lakh in total</dd></div><div><dt>Start</dt><dd>September 2027</dd></div><div><dt>English test</dt><dd class="muted">Missing. This is the last 20%.</dd></div></dl>
-    <div class="block"><h2>Documents</h2><ul class="todo"><li><span></span><span><label>CV</label><span class="small muted">Version 2, uploaded 2 Nov</span></span></li><li><span></span><span><label>Statement of purpose, Harrowgate</label><span class="small muted">Draft 2, edited yesterday</span></span></li><li><span></span><span><label>Degree transcripts</label><span class="small muted">Uploaded 2 Nov</span></span></li></ul></div>`;
+    <div class="block"><h2>Documents</h2><ul class="todo list"><li><span></span><span><label>CV</label><span class="small muted">Version 2, uploaded 2 Nov</span></span></li><li><span></span><span><label>Statement of purpose, Harrowgate</label><span class="small muted">Draft 2, edited yesterday</span></span></li><li><span></span><span><label>Degree transcripts</label><span class="small muted">Uploaded 2 Nov</span></span></li></ul></div>`;
   else { const a = apps.find(x => x.id === id);
     s.innerHTML = `<div class="top"><span class="mono muted">BOARDING PASS</span><button class="pill" type="button" data-close>Close</button></div>
     <div><div class="codes">DEL <span aria-hidden="true">→</span> ${a.to}</div></div>
     <div><h1 id="sheet-title">${a.course}</h1><p class="muted">${a.uni}</p></div>
     <span class="stamp">${steps[a.at].toUpperCase()}</span>
-    <p><button class="pill sun" type="button" data-toast>Apply on the university site</button></p>
-    <div class="block"><h2>What's left <span id="left"></span></h2><ul class="todo" id="cl">${checklist.map((c, i) => `<li><input type="checkbox" id="c${i}" ${c[2] ? 'checked' : ''}><span><label for="c${i}">${c[0]}</label><span class="small muted">${c[1]}</span></span></li>`).join('')}</ul></div>
+    <p><button class="pill primary" type="button" data-toast>Apply on the university site</button></p>
+    <div class="block"><h2>What's left <span id="left"></span></h2><ul class="todo list" id="cl">${checklist.map((c, i) => `<li><input type="checkbox" id="c${i}" ${c[2] ? 'checked' : ''}><span><label for="c${i}">${c[0]}</label><span class="small muted">${c[1]}</span></span></li>`).join('')}</ul></div>
     <div class="block"><h2>The facts. Tap one to see where it came from.</h2><dl class="facts">${facts.map((f, i) => `<div><dt>${f[0]}</dt><dd><button class="src" type="button" aria-expanded="false" data-proof="${i}">${f[1]}</button></dd><div class="proof" id="p${i}" hidden><q>${f[2]}</q><span class="muted">${f[3]}. Checked ${f[4]}.</span></div></div>`).join('')}</dl></div>`;
     left(); }
   s.hidden = false; $('#veil').hidden = false; $('[data-close]', s).focus();
@@ -236,7 +255,7 @@ function left() { const b = [...document.querySelectorAll('#cl input')]; if ($('
 const add = (html) => { const d = document.createElement('div'); d.className = 'block enter'; d.innerHTML = html; $('#thread').append(d); $('#main').scrollTop = $('#main').scrollHeight; return d; };
 const wait = (ms) => new Promise(r => setTimeout(r, calm ? 0 : ms));
 async function run(title, lines) {
-  const d = add(`<div class="run live" role="status"><div class="head"><span class="beat"></span><span>${title}</span></div><ul></ul></div>`);
+  const d = add(`<div class="run live" role="status"><div class="head"><span class="orb sm" aria-hidden="true"></span><span>${title}</span></div><ul></ul></div>`);
   for (const l of lines) { await wait(650); $('ul', d).insertAdjacentHTML('beforeend', `<li><b aria-hidden="true">✓</b>${l}</li>`); $('#main').scrollTop = $('#main').scrollHeight; }
   await wait(500); const r = $('.run', d); r.classList.replace('live', 'done'); $('.head span:last-child', d).textContent = 'Done. 42 pages checked.'; }
 let busy = false;
@@ -246,7 +265,7 @@ async function say(text) {
   const t = text.toLowerCase();
   if (t.includes('course')) {
     await run('Looking for more courses', ['Read your profile and budget', 'Searched the UK, Netherlands and Ireland', 'Opened 42 official course pages', 'Checked every deadline and fee against the source']);
-    add(`<p>Three more fit. One closes in 19 days, so decide on that one first.</p><ul class="found">${found.map(c => `<li><div><strong>${c.course}</strong><div class="muted">${c.uni}</div><div class="small"><span class="tag">${c.fit}</span> Closes ${c.gate}, ${c.fee}. <span class="muted">${c.why}</span></div></div><button class="pill" type="button" data-track="${c.id}">Track</button></li>`).join('')}</ul>`);
+    add(`<p>Three more fit. One closes in 19 days, so decide on that one first.</p><ul class="found list">${found.map(c => `<li><div><strong>${c.course}</strong><div class="muted">${c.uni}</div><div class="small"><span class="tag">${c.fit}</span> Closes ${c.gate}, ${c.fee}. <span class="muted">${c.why}</span></div></div><button class="pill" type="button" data-track="${c.id}">Track</button></li>`).join('')}</ul>`);
   } else if (t.includes('reference')) {
     add(`<p>Here's the request. It's short on purpose; professors answer short emails.</p><div class="run"><p><strong>Subject:</strong> Reference for my master's applications, due 15 January</p><p>Dear Prof. Iyer, I was in your Financial Statistics class in 2019 (roll no. 41). I'm applying for MSc Business Analytics programmes in the UK and would be grateful for a reference. The first deadline is 15 January. I've attached my CV and a one-page summary of what the course looks for. Thank you, Rahul</p></div><p class="muted small">I can't send email for you. Copy it into your own inbox.</p>`);
   } else if (t.includes('today')) {
@@ -256,7 +275,7 @@ async function say(text) {
 }
 
 let toastT;
-function toast(m) { let t = $('#toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); t.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(120px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--ground);padding:8px 16px;border-radius:999px;font-weight:500;z-index:30;white-space:nowrap'; document.body.append(t); } t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200); }
+function toast(m) { let t = $('#toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); t.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(120px + env(safe-area-inset-bottom,0px));background:var(--primary);color:var(--on-primary);padding:8px 16px;border-radius:999px;font-weight:500;z-index:30;white-space:nowrap'; document.body.append(t); } t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200); }
 
 document.addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (e.target.id === 'veil') return closeSheet(); if (!b) return;
@@ -264,7 +283,7 @@ document.addEventListener('click', (e) => {
   else if ('close' in b.dataset) closeSheet();
   else if (b.dataset.say) say(b.dataset.say);
   else if (b.dataset.proof) { const p = $('#p' + b.dataset.proof); p.hidden = !p.hidden; b.setAttribute('aria-expanded', String(!p.hidden)); }
-  else if (b.dataset.track) { const c = found.find(x => x.id === b.dataset.track); if (!apps.includes(c)) { apps.push(Object.assign(c, { at: 0, next: 'Start your application' })); paint(); } b.textContent = 'Tracking'; b.disabled = true; b.classList.add('sun'); toast('Boarding pass added'); }
+  else if (b.dataset.track) { const c = found.find(x => x.id === b.dataset.track); if (!apps.includes(c)) { apps.push(Object.assign(c, { at: 0, next: 'Start your application' })); paint(); } b.textContent = 'Tracking'; b.disabled = true; b.classList.add('primary'); toast('Boarding pass added'); }
   else if ('toast' in b.dataset) toast('The real app opens the university\'s own page');
 });
 document.addEventListener('change', left);

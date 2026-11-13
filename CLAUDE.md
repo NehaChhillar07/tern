@@ -6,11 +6,12 @@ Tern is an AI study-abroad counsellor (web SaaS). Read `docs/PROMPT.md` for the 
 
 `DESIGN.md` is the source of truth for look, motion and voice. Read it before any UI or copy work. It overrides any skill's default taste. In short:
 
-- Tern is an agent, not an app with pages. No sidebar, tabs or menu: one thread, and sheets that slide over it.
+- Tern is an agent, not an app with pages. No sidebar, tabs or menu: one thread, and sheets that float over it.
 - Tern speaks first, shows its work step by step, and drafts while the user acts.
-- Black and white with one sunlight yellow. Yellow means "yours to do" or "Tern is working".
+- Quiet and editorial: off-white canvas, warm near-black ink, light (weight 300) display type, generous space.
+- Colour is atmosphere only: soft pastel glows and Tern's orb. Buttons are ink or outlined. No saturated accent.
 - Applications are boarding passes. Every fact shows its source.
-- Big type, few words, lists over cards, motion only as feedback. Remove one more thing before shipping.
+- Motion is slow and soft. The orb is the only thing that moves by itself. Remove one more thing before shipping.
 
 ## Which skill to use for which task
 

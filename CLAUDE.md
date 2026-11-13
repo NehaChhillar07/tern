@@ -52,6 +52,6 @@ Follow these steps in order. Do not skip the review steps.
 
 ## Conventions
 
-- Stack: Next.js (App Router), TypeScript, Tailwind, shadcn/ui, Supabase, Inngest, Resend. See `docs/02-system-design.md`.
+- Stack: Next.js (App Router), TypeScript, Tailwind, shadcn/ui, Supabase (database, sign-in, storage, queue and scheduler), Vercel. No Inngest; email service added in M5. See `docs/04-build-plan.md` section 6, which overrides the job runner named in `docs/02-system-design.md`.
 - Facts shown to users (deadlines, fees, requirements, links) come from the database with a source, never from model memory.
 - Never commit secrets. Never add third-party skills without reading them and recording them in `.claude/skills/SOURCES.md`.

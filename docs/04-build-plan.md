@@ -31,7 +31,7 @@ Status of all milestones: **Not started**.
 | 0.2 | Next.js app with Tailwind and shadcn/ui, themed from `DESIGN.md` tokens, both themes, both fonts | A `/design` page shows every token and base component |
 | 0.3 | Supabase project (EU region), Drizzle schema for all tables in the system design, row-level security | A test proves user A cannot read user B's rows |
 | 0.4 | Sign-in with email link and Google | A new user can sign in and out |
-| 0.5 | Inngest and Resend wired with one hello-world job and one test email | Job runs on a schedule; email arrives |
+| 0.5 | Background jobs on Supabase's queue and scheduler, with one hello-world job | Job runs on a schedule |
 | 0.6 | CI: lint, typecheck, unit tests, preview deploys on Vercel | A pull request shows green checks and a preview link |
 | 0.7 | `usage_event` logging wrapper around every Claude call | A call writes model, tokens, cost and latency |
 
@@ -206,17 +206,20 @@ Eight invented applicants, stored in `packages/evals/personas/`:
 
 ---
 
-## 6. What I need from you before M0
+## 6. Accounts and services
 
-Accounts are in your name so you own everything. Each takes a few minutes.
+Updated 13 Nov 2026 after the founder's answers. The plan now needs fewer accounts.
 
-1. **Anthropic API account** with billing, for the Claude models.
-2. **Supabase** project (choose an EU region).
-3. **Vercel** account connected to the GitHub repo.
-4. **Inngest** and **Resend** accounts (free tiers are enough to start).
-5. **A domain name** for Tern, once you choose one.
+| Service | Status | Who does what |
+|---|---|---|
+| **Supabase** (database, sign-in, file storage, scheduled jobs) | Needed for M0 | Founder signs up with GitHub and connects the Supabase connector in Claude. Claude then creates and configures the project (EU region). |
+| **Vercel** (hosting) | Needed for M0 | Founder signs up with GitHub and imports the `tern` repo once. Every push deploys automatically. The free `*.vercel.app` address is used until a domain is chosen. |
+| **Anthropic API** (the AI models) | Needed for M1 | A Claude subscription (Pro or Max) does not include API access. The founder creates a separate Claude Console account and adds a small prepaid credit. |
+| **Inngest** | Removed | Background jobs run on Supabase's built-in queue and scheduler plus Vercel Cron. Revisit only if jobs outgrow them. |
+| **Resend** (email) | Deferred to M5 | Supabase sends the sign-in emails. A dedicated email service is only needed for reminder emails. |
+| **Domain** | Later | Not needed to start. |
 
-Keys are never pasted into chat. I will ask for each one through the secure credential form when it is first needed.
+Claude cannot create accounts or accept terms of service on the founder's behalf. Keys are never pasted into chat; each is requested through the secure credential form when first needed.
 
 ---
 

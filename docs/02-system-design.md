@@ -5,6 +5,7 @@
 | **Status** | Draft v1, for founder review |
 | **Date** | 12 Nov 2026 |
 | **Depends on** | [`01-prd.md`](01-prd.md) |
+| **Changed since** | 13 Nov 2026: Inngest is replaced by Supabase's queue and scheduler plus Vercel Cron, and Resend is deferred to M5. Read "Inngest" below as "the job runner". See [`04-build-plan.md`](04-build-plan.md) section 6. |
 
 ---
 

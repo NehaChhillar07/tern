@@ -20,14 +20,18 @@
 
 ## 2. Milestones
 
-Status of all milestones: **Not started**.
+Status: **M0 in progress** (started 13 Nov 2026). All others not started.
+
+M0 progress: app skeleton, theme from `DESIGN.md`, `/design` page and Vercel deploys are done (0.2, and 0.1 as a single app; see note). Supabase project `tern` exists in EU West (Ireland), project ref `ahqvrbjzvlboahagagpp`. Still to do: database schema and row-level security (0.3), sign-in (0.4), background job (0.5), CI (0.6), usage logging (0.7).
+
+Note: the app is a single Next.js project at the repository root, not a monorepo. This keeps Vercel deploys zero-config. Agent, database, job and eval code live under `src/agents`, `src/db`, `src/jobs` and `evals/`.
 
 ### M0. Foundations
 *You can open a deployed, empty Tern and sign in.*
 
 | # | Task | Done when |
 |---|---|---|
-| 0.1 | Monorepo: pnpm + Turborepo, `apps/web`, `packages/{agents,db,jobs,evals}` | `pnpm build` and `pnpm test` pass |
+| 0.1 | Next.js app at the repo root with pnpm | `pnpm build` passes |
 | 0.2 | Next.js app with Tailwind and shadcn/ui, themed from `DESIGN.md` tokens, both themes, both fonts | A `/design` page shows every token and base component |
 | 0.3 | Supabase project (EU region), Drizzle schema for all tables in the system design, row-level security | A test proves user A cannot read user B's rows |
 | 0.4 | Sign-in with email link and Google | A new user can sign in and out |

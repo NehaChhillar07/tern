@@ -1,0 +1,230 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (@media (prefers-color-scheme: dark));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Inter Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "Inter Tight Variable", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-body: var(--body);
+  --color-ok: var(--ok);
+  --color-alert-soft: var(--alert-soft);
+  --shadow-lift: var(--lift);
+  --ease-soft: var(--ease-soft);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Tokens from DESIGN.md. Change them there first. */
+:root {
+  --radius: 1rem;
+  --background: #F5F5F3;
+  --foreground: #0C0A09;
+  --card: #FFFFFF;
+  --card-foreground: #0C0A09;
+  --popover: #FFFFFF;
+  --popover-foreground: #0C0A09;
+  --primary: #1C1917;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EFEEEB;
+  --secondary-foreground: #0C0A09;
+  --muted: #EFEEEB;
+  --muted-foreground: #76706A;
+  --accent: #EFEEEB;
+  --accent-foreground: #0C0A09;
+  --destructive: #B4231A;
+  --border: #E6E4E1;
+  --input: #D5D2CE;
+  --ring: #0C0A09;
+  --chart-1: #B4E6D4;
+  --chart-2: #F6CDB0;
+  --chart-3: #CDBDE6;
+  --chart-4: #AFCDEE;
+  --chart-5: #EDBFCB;
+  --sidebar: #F5F5F3;
+  --sidebar-foreground: #0C0A09;
+  --sidebar-primary: #1C1917;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EFEEEB;
+  --sidebar-accent-foreground: #0C0A09;
+  --sidebar-border: #E6E4E1;
+  --sidebar-ring: #0C0A09;
+
+  --body: #45423F;
+  --alert-soft: #FBE4E1;
+  --ok: #15803D;
+  --mint: #B4E6D4;
+  --peach: #F6CDB0;
+  --lilac: #CDBDE6;
+  --sky: #AFCDEE;
+  --rose: #EDBFCB;
+  --lift: 0 6px 24px rgb(12 10 9 / 0.06);
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #0C0A09;
+    --foreground: #FAFAF9;
+    --card: #1A1716;
+    --card-foreground: #FAFAF9;
+    --popover: #1A1716;
+    --popover-foreground: #FAFAF9;
+    --primary: #FAFAF9;
+    --primary-foreground: #0C0A09;
+    --secondary: #262220;
+    --secondary-foreground: #FAFAF9;
+    --muted: #262220;
+    --muted-foreground: #A39D96;
+    --accent: #262220;
+    --accent-foreground: #FAFAF9;
+    --destructive: #FF8A7D;
+    --border: #2A2624;
+    --input: #3D3835;
+    --ring: #FAFAF9;
+    --chart-1: #1F4A3F;
+    --chart-2: #5A3A26;
+    --chart-3: #3D315C;
+    --chart-4: #25405E;
+    --chart-5: #5A2F3C;
+    --sidebar: #0C0A09;
+    --sidebar-foreground: #FAFAF9;
+    --sidebar-primary: #FAFAF9;
+    --sidebar-primary-foreground: #0C0A09;
+    --sidebar-accent: #262220;
+    --sidebar-accent-foreground: #FAFAF9;
+    --sidebar-border: #2A2624;
+    --sidebar-ring: #FAFAF9;
+
+    --body: #D2CEC9;
+    --alert-soft: #3A1B18;
+    --ok: #5FD08E;
+    --mint: #1F4A3F;
+    --peach: #5A3A26;
+    --lilac: #3D315C;
+    --sky: #25405E;
+    --rose: #5A2F3C;
+    --lift: 0 6px 24px rgb(0 0 0 / 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-body;
+    letter-spacing: 0.01em;
+  }
+}
+
+/* Type roles from DESIGN.md */
+@utility type-headline {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  font-size: clamp(2rem, 6.4vw, 3.125rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+  text-wrap: balance;
+}
+@utility type-title {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  font-size: 1.875rem;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+}
+@utility type-caption {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Tern's orb: the one thing that moves by itself */
+.orb {
+  position: relative;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: conic-gradient(from 0deg, #A7E5D3, #A8C8E8, #C8B8E0, #E8B8C4, #F4C5A8, #A7E5D3);
+  animation: orb-turn 14s linear infinite;
+}
+.orb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.85), rgb(255 255 255 / 0) 55%);
+}
+.orb[data-state="working"] { animation-duration: 2.2s; }
+.orb[data-size="sm"] { width: 1rem; height: 1rem; }
+@keyframes orb-turn { to { transform: rotate(360deg); } }
+
+/* The soft bloom behind the top of the thread */
+.bloom {
+  position: fixed;
+  top: -140px;
+  left: 50%;
+  z-index: 0;
+  width: min(900px, 140%);
+  height: 460px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0.6;
+  filter: blur(70px);
+  background:
+    radial-gradient(circle at 25% 50%, var(--peach), transparent 55%),
+    radial-gradient(circle at 60% 30%, var(--lilac), transparent 55%),
+    radial-gradient(circle at 85% 60%, var(--sky), transparent 50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

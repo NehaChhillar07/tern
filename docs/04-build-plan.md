@@ -22,7 +22,7 @@
 
 Status: **M0 in progress** (started 13 Nov 2026). All others not started.
 
-M0 progress: app skeleton, theme from `DESIGN.md`, `/design` page and Vercel deploys are done (0.2, and 0.1 as a single app; see note). Supabase project `tern` exists in EU West (Ireland), project ref `ahqvrbjzvlboahagagpp`. Still to do: database schema and row-level security (0.3), sign-in (0.4), background job (0.5), CI (0.6), usage logging (0.7).
+M0 progress: app skeleton, theme from `DESIGN.md`, `/design` page and Vercel deploys are done (0.2, and 0.1 as a single app; see note). Supabase project `tern` exists in EU West (Ireland), project ref `ahqvrbjzvlboahagagpp`. Database schema and row-level security (0.3) are applied from `supabase/migrations/0001_initial_schema.sql` and tested: user A sees only their own row, cannot read or edit user B's, and cannot read usage logs. The app talks to Supabase with supabase-js and generated types, not Drizzle. Still to do: sign-in (0.4), background job (0.5), CI (0.6), usage logging (0.7).
 
 Note: the app is a single Next.js project at the repository root, not a monorepo. This keeps Vercel deploys zero-config. Agent, database, job and eval code live under `src/agents`, `src/db`, `src/jobs` and `evals/`.
 
